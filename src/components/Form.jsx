@@ -7,6 +7,7 @@ const Form = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { addData } = useStore();
   const [additionalFields, setAdditionalFields] = useState([]);
+  const [showButtonSend, setShowButtonSend] = useState(true)
 
   const addNewWork = () => {
     const totalFields = Object.keys(formData).length
@@ -39,11 +40,15 @@ const Form = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      setShowButtonSend(false)
       const response = await axios.post('https://776614bb5bcaaaa6.mokky.dev/info1', formData);
       addData([response.data]);
       setFormData({ field1: '', field2: '', field3: '', field4: '', field5: '' });
       setAdditionalFields([]);
+      setShowButtonSend(true)
     } catch (error) {
+      alert(' Произашла ошибка!\n данные не записаны');
+      setShowButtonSend(false)
       console.error("Failed to submit data", error);
     } finally {
       setIsSubmitting(false);
@@ -76,22 +81,24 @@ const Form = () => {
             Удалить
           </button>
         </div>))}
-        <button 
+        {showButtonSend ? <button 
           type="submit" 
           className='mt-2 w-full border px-5 py-2 bg-green-500 font-bold text-white' 
           disabled={isSubmitting}
         >
           Submit
-        </button>
+        </button>:
+        <button 
+        type="submit" 
+        className='mt-2 w-full border px-5 py-2 bg-green-200 font-bold cursor-default text-white'
+        >
+        Submit
+      </button>
+        }
+        
       </form>
     </>
   );
 };
 
 export default Form;
-
-{/* <input type="text" className='w-full outline-none border p-3' name="field1" value={formData.field1} onChange={handleChange} required placeholder="Поле 1" />
-      <input type="text" className='w-full outline-none border p-3' name="field2" value={formData.field2} onChange={handleChange} required placeholder="Поле 2" />
-      <input type="text" className='w-full outline-none border p-3' name="field3" value={formData.field3} onChange={handleChange} required placeholder="Поле 3" />
-      <input type="text" className='w-full outline-none border p-3' name="field4" value={formData.field4} onChange={handleChange} required placeholder="Поле 4" />
-      <input type="text" className='w-full outline-none border p-3' name="field5" value={formData.field5} onChange={handleChange} required placeholder="Поле 5" /> */}
